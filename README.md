@@ -50,13 +50,7 @@ To run the tests, further requirements are:
 
 ## Installation
 
-You can either install this package directly through pip:
-
-```bash
-pip3 install --user pytorch-influence-functions
-```
-
-Or you can clone the repo and 
+You can clone the repo and 
 
 * import it as a package after it's in your `PATH`.
 * install it using `python setup.py install`
@@ -79,13 +73,67 @@ trainloader, testloader = get_my_dataloaders()
 ptif.init_logging()
 config = ptif.get_default_config()
 
-influences, harmful, helpful = ptif.calc_img_wise(config, model, trainloader, testloader)
+influences = ptif.calc_img_wise(config, model, trainloader, testloader)
 
-# do someting with influences/harmful/helpful
+# do someting with influences
 ```
 
 Here, `config` contains default values for the influence function calculation
 which can of course be changed. For details and examples, look [here](#config).
+
+For example, the below shows the usage based on the malaria-cell-classification-pytorch project. Note that this feature will be added to the lightning based project.
+
+```python
+import pytorch_influence_functions as ptif
+
+from train_malaria_screener import MalariaTrainer
+
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "--config",
+        "-c",
+        dest="config",
+        default="screener_config.json",
+        help="configuration file path",
+        # required=True,
+    )
+
+    args = parser.parse_args()
+
+    if not os.path.exists(args.config):
+        print("no configuration file")
+        return
+    with open(args.config) as f:
+        config = json.load(f)
+
+    error_msgs = utils._validation_config(config)
+    if error_msgs:
+        print("\n".join(error_msgs))
+        return
+
+    trainer = MalariaTrainer(config)
+
+    ptif.init_logging()
+    config = ptif.get_default_config()
+    config["seed"] = 0
+    config["dataset"] = "mal_scr"
+    config["num_classes"] = 2
+
+    influences = ptif.calc_img_wise(
+        config, trainer.model, trainer.train_loader, trainer.test_loader
+    )
+
+    for k, v in influences.items():
+        print(f"When model infers class {k},")
+        print("  top-10 harmful images: {}".format(v["harmful"][:10]))
+        print("  top-10 helpful images: {}".format(v["helpful"][:10]))
+        print("==============================")
+
+
+```
+
 
 ## Background and Documentation
 
