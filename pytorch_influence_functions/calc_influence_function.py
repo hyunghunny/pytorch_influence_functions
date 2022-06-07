@@ -491,13 +491,14 @@ def calc_img_wise(config, model, train_loader, test_loader):
         save_json(influences, tmp_influences_path)
         display_progress("Test samples processed: ", j, test_dataset_iter_len)
 
-    logging.info(f"The results for this run are:")
-    logging.info("Influences: ")
-    logging.info(influence[:3])
-    logging.info("Most harmful img IDs: ")
-    logging.info(harmful[:3])
-    logging.info("Most helpful img IDs: ")
-    logging.info(helpful[:3])
+    #XXX:below loggings seem inproper 
+    #logging.info(f"The results for this run are:")
+    #logging.info("Influences: ")
+    #logging.info(influence[:3])
+    #logging.info("Most harmful img IDs: ")
+    #logging.info(harmful[:3])
+    #logging.info("Most helpful img IDs: ")
+    #logging.info(helpful[:3])
 
     influences_path = outdir.joinpath(f"influence_results_{test_start_index}_"
                                       f"{test_sample_num}.json")
