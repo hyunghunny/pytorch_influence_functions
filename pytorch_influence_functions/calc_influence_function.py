@@ -450,6 +450,11 @@ def calc_img_wise(config, model, train_loader, test_loader):
     influences_meta_path = outdir.joinpath(influences_meta_fn)
     save_json(influences_meta, influences_meta_path)
 
+    files = []
+    for s in train_loader.dataset.samples:
+        paths = s[0].split("/")
+        files.append(f"{paths[-2]}/{paths[-1]}") # to make short path
+
     influences = {}
     # Main loop for calculating the influence function one test sample per
     # iteration.
@@ -480,9 +485,11 @@ def calc_img_wise(config, model, train_loader, test_loader):
         influences[str(i)]['num_in_dataset'] = j
         influences[str(i)]['time_calc_influence_s'] = end_time - start_time
         infl = [x.tolist() for x in influence]
-        influences[str(i)]['influence'] = infl
-        influences[str(i)]['harmful'] = harmful[:500]
-        influences[str(i)]['helpful'] = helpful[:500]
+        #influences[str(i)]['influence'] = infl
+        harms = [ [ files[a], infl[a] ] for a in harmful[:100] ]
+        helps = [ [ files[e], infl[e] ] for e in helpful[:100] ]
+        influences[str(i)]['harmful'] = harms
+        influences[str(i)]['helpful'] = helps
 
         tmp_influences_path = outdir.joinpath(f"influence_results_tmp_"
                                               f"{test_start_index}_"
