@@ -50,13 +50,7 @@ To run the tests, further requirements are:
 
 ## Installation
 
-You can either install this package directly through pip:
-
-```bash
-pip3 install --user pytorch-influence-functions
-```
-
-Or you can clone the repo and 
+You can clone the repo and 
 
 * import it as a package after it's in your `PATH`.
 * install it using `python setup.py install`
@@ -79,9 +73,9 @@ trainloader, testloader = get_my_dataloaders()
 ptif.init_logging()
 config = ptif.get_default_config()
 
-influences, harmful, helpful = ptif.calc_img_wise(config, model, trainloader, testloader)
+influences = ptif.calc_img_wise(config, model, trainloader, testloader)
 
-# do someting with influences/harmful/helpful
+# do someting with influences
 ```
 
 Here, `config` contains default values for the influence function calculation
